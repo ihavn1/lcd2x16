@@ -6,12 +6,22 @@
  */ 
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
+
+#include "lcd2x16.h"
 
 int main(void)
 {
-    /* Replace with your application code */
+	lcd_t lcd = 0;
+	
+	lcd = lcdCreate(0x27, 16, 2);
+	sei();
+	
+	lcdBegin(lcd);
+	
     while (1) 
     {
+		DDRA = 0;
     }
 }
 

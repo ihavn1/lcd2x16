@@ -9,10 +9,12 @@
 #ifndef LCD2X16_H_
 #define LCD2X16_H_
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct lcd * lcd_t;
 
 lcd_t lcdCreate(uint8_t twiAddress, uint8_t maxColumns, uint8_t maxRows);
+void lcdBegin(lcd_t self);
 void lcdBackLight(lcd_t self, bool newState);
 
 
