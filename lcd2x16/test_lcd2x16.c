@@ -8,6 +8,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include <util/delay.h>
+
 #include "lcd2x16.h"
 
 int main(void)
@@ -18,10 +20,16 @@ int main(void)
 	sei();
 	
 	lcdBegin(lcd);
+	lcdBackLight(lcd, 1);
+ 	lcdSetCursor(lcd,0,0);
+	
+	lcdWrite(lcd, 0x30);
 	
     while (1) 
     {
-		DDRA = 0;
+
+
+		
     }
 }
 
