@@ -21,9 +21,9 @@ int main(void)
 	
 	lcdBegin(lcd);
 	lcdBackLight(lcd, 1);
- 	lcdSetCursor(lcd,0,0);
+ 	lcdSetCursor(lcd,2,0);
 	
-	lcdWrite(lcd, 0x30);
+	lcdWrite(lcd, 'A');
 	
     while (1) 
     {

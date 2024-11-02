@@ -3,6 +3,8 @@
 *
 * Created: 27/10/2024 12.53.22
 *  Author: ib
+*
+*	LCD Data Sheet: https://components101.com/sites/default/files/component_datasheet/16x2%20LCD%20Datasheet.pdf
 */
 
 #include <stdlib.h>
@@ -23,6 +25,7 @@
 // Prototypes
 void _twiCallback(twi_p twiInstance, twiReturnCode_t twiRc, uint8_t * twiMessageBuf, uint8_t twiMessageLen);
 twiReturnCode_t _twiByteWrite(lcd_t self, uint8_t byte);
+twiReturnCode_t _twiByteRaw(lcd_t self, uint8_t byte);
 twiReturnCode_t _lcdWrite(lcd_t self, uint8_t data, bool function);
 void _lcdInit(lcd_t self);
 
@@ -50,6 +53,7 @@ lcd_t lcdCreate(uint8_t twiAddress, uint8_t maxColumns, uint8_t maxRows) {
 // --------------------------------------------------
 void lcdBegin(lcd_t self) {
 	self->twiInstance = twiCreate(self->_twiAddress, twi100kHz, F_CPU, NULL);
+	_twiByteRaw(self, 0x00); // Clear shift register on LCD
 	
 	_delay_ms(50); // Wait for Power On off LCD
 	
@@ -59,8 +63,7 @@ void lcdBegin(lcd_t self) {
 // --------------------------------------------------
 void lcdBackLight(lcd_t self, bool newState) {
 	self->backLiteBit = (newState ? BACKLIGHT_BIT : 0);
-	//_lcdWrite(self,0,true);
-	_twiByteWrite(self, self->backLiteBit); 
+	_twiByteRaw(self, self->backLiteBit); 
 }
 
 // --------------------------------------------------
@@ -94,29 +97,16 @@ void _lcdInit(lcd_t self) {
 	// vvvvvvvvvvvvvvvv
 	_delay_us(4200);
 	_twiByteWrite(self, 0b00110000); // DB5 and DB4
-	_delay_us(150);
 	_twiByteWrite(self, 0b00110000); // DB5 and DB4
-	_delay_us(37);
-
 	_twiByteWrite(self, 0b00100000); // Function set: Data interface len = 4 bit
-	_delay_us(37);
 
 // From now on the display only accept 4 bit data
  	_lcdWrite(self, 0b00101000, true); // Function set: Data interface len = 4 bit, Font 5x8, 2 lines
-	_delay_us(37);
-	 // Must be written two times
- 	_lcdWrite(self, 0b00101000, true); // Function set: Data interface len = 4 bit, Font 5x8, 2 lines	 
-	_delay_us(37);
-	
 	_lcdWrite(self, 0b00001100,true); // Display ON/Off ?????
-	_delay_us(37);
 	
 	lcdClear(self);
  	
  	_lcdWrite(self, 0b00000110, true); // Left to right
-	_delay_us(37);
-// 
-// 	lcdClear(self);
 }
 
 // --------------------------------------------------
@@ -131,6 +121,11 @@ twiReturnCode_t _twiByteWrite(lcd_t self, uint8_t byte) {
 	twiTransmit(self->twiInstance, &_outputByte, 1);
 	
 	return rc;  // What to return ????
+}
+
+// --------------------------------------------------
+twiReturnCode_t _twiByteRaw(lcd_t self, uint8_t byte) {
+	twiTransmit(self->twiInstance, &byte, 1);
 }
 
 // --------------------------------------------------
