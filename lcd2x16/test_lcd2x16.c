@@ -21,9 +21,14 @@ int main(void)
 	
 	lcdBegin(lcd);
 	lcdBackLight(lcd, 1);
- 	lcdSetCursor(lcd,2,0);
-	
-	lcdWrite(lcd, 'A');
+	lcdCursorOn(lcd, 0);
+	lcdCursorBlink(lcd, 0);
+
+	lcdGoto(lcd,0,0);
+	lcdPrint(lcd, "0123456789ABCDEF");
+	//lcdPrint(lcd,"Peter Pan");
+	//lcdPrint(lcd,"Ole Olsen");
+	//lcdPrintChar(lcd,'A');
 	
     while (1) 
     {
