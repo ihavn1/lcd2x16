@@ -31,9 +31,9 @@
 
 // Prototypes
 void _twiCallback(twi_p twiInstance, twiReturnCode_t twiRc, uint8_t * twiMessageBuf, uint8_t twiMessageLen);
-twiReturnCode_t _lcdByteWrite(lcd_t self, uint8_t byte);
-twiReturnCode_t _twiByteWrite(lcd_t self, uint8_t byte);
-twiReturnCode_t _lcdWrite(lcd_t self, uint8_t data, bool function);
+void _lcdByteWrite(lcd_t self, uint8_t byte);
+void _twiByteWrite(lcd_t self, uint8_t byte);
+void _lcdWrite(lcd_t self, uint8_t data, bool function);
 void _lcdInit(lcd_t self);
 
 // --------------------------------------------------
@@ -195,27 +195,25 @@ void _lcdInit(lcd_t self) {
 }
 
 // --------------------------------------------------
-twiReturnCode_t _lcdByteWrite(lcd_t self, uint8_t byte) {
+void _lcdByteWrite(lcd_t self, uint8_t byte) {
 	uint8_t _outputByte = byte| LCD_E_BIT;
 	
 	while (twiIsBusy()) {}
-	twiReturnCode_t rc = twiTransmit(self->twiInstance, &_outputByte, 1);
+	twiTransmit(self->twiInstance, &_outputByte, 1);
 	
 	_outputByte &= ~LCD_E_BIT;
 	while (twiIsBusy()) {}
 	twiTransmit(self->twiInstance, &_outputByte, 1);
-	
-	return rc;  // What to return ????
 }
 
 // --------------------------------------------------
-twiReturnCode_t _twiByteWrite(lcd_t self, uint8_t byte) {
+void _twiByteWrite(lcd_t self, uint8_t byte) {
 	while (twiIsBusy()) {}
 	twiTransmit(self->twiInstance, &byte, 1);
 }
 
 // --------------------------------------------------
-twiReturnCode_t _lcdWrite(lcd_t self, uint8_t data, bool function) {
+void _lcdWrite(lcd_t self, uint8_t data, bool function) {
 	uint8_t _outputByte = data & 0xF0;  // Prepare high nibble
 	
 	if (!function) {
@@ -231,6 +229,4 @@ twiReturnCode_t _lcdWrite(lcd_t self, uint8_t data, bool function) {
 	_outputByte &= 0x0F;
 	_outputByte |= (data & 0x0F) << 4;
 	_lcdByteWrite(self, _outputByte);
-	
-	return TWI_OK;  // What to return ????
 }

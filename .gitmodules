@@ -1,0 +1,3 @@
+[submodule "lcd2x16/twi"]
+	path = lcd2x16/twi
+	url = https://github.com/ihavn1/twi.git
