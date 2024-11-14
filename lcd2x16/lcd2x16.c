@@ -210,6 +210,7 @@ twiReturnCode_t _lcdByteWrite(lcd_t self, uint8_t byte) {
 
 // --------------------------------------------------
 twiReturnCode_t _twiByteWrite(lcd_t self, uint8_t byte) {
+	while (twiIsBusy()) {}
 	twiTransmit(self->twiInstance, &byte, 1);
 }
 
